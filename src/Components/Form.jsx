@@ -1,161 +1,111 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import "./Form.css";
 
-const Form = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+export default function Form() {
+  const [isOpen, setIsOpen] = useState(false);
   const [formData, setFormData] = useState({
-    username: "",
     email: "",
     phone: "",
     dob: "",
+    username: "",
   });
 
+  const modalRef = useRef(null);
+
   const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value });
+    const { id, value } = e.target;
+    setFormData((prev) => ({ ...prev, [id]: value }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const { username, email, phone, dob } = formData;
-    if (!username) {
-      alert("Please fill out the username.");
-      return;
-    }
-    if (!email) {
-      alert("Please fill out the email.");
-      return;
-    }
-    if (!email.includes("@")) {
-      alert("Invalid email. Please check your email address.");
-      return;
-    }
-    if (!phone) {
-      alert("Please fill out the phone number.");
-      return;
-    }
+
+    const { phone, dob } = formData;
+
     if (!/^\d{10}$/.test(phone)) {
       alert("Invalid phone number. Please enter a 10-digit phone number.");
       return;
     }
-    if (!dob) {
-      alert("Please fill out the date of birth.");
-      return;
-    }
-    const enteredDate = new Date(dob);
+
+    const selectedDate = new Date(dob);
     const today = new Date();
-    if (enteredDate > today) {
-      alert("Invalid date of birth. Date of birth cannot be in the future");
+    if (selectedDate > today) {
+      alert("Invalid date of birth. Please enter a valid date.");
       return;
     }
-    alert("Form submitted successfully!");
-    setFormData({ username: "", email: "", phone: "", dob: "" });
-    setIsModalOpen(false);
+
+    // Reset form and close modal
+    setIsOpen(false);
+    setFormData({
+      username: "",
+      email: "",
+      phone: "",
+      dob: "",
+    });
   };
 
   const handleOutsideClick = (e) => {
-    if (e.target.className === "modal") {
-      setIsModalOpen(false);
+    if (modalRef.current && !modalRef.current.contains(e.target)) {
+      setIsOpen(false);
     }
   };
 
   useEffect(() => {
-    document.addEventListener("click", handleOutsideClick);
+    if (isOpen) {
+      document.addEventListener("mousedown", handleOutsideClick);
+    } else {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    }
     return () => {
-      document.removeEventListener("click", handleOutsideClick);
+      document.removeEventListener("mousedown", handleOutsideClick);
     };
-  }, []);
+  }, [isOpen]);
 
   return (
-    <div id="root" style={{ textAlign: "center", paddingTop: "50px" }}>
-      <button
-        className="openForm-button"
-        onClick={() => setIsModalOpen(true)}
-        style={{
-          padding: "10px 20px",
-          backgroundColor: "#007bff",
-          border: "none",
-          color: "white",
-          fontSize: "1rem",
-          borderRadius: "5px",
-          cursor: "pointer",
-        }}>
-        Open Form
-      </button>
+    <div>
+      <h1 style={{ textAlign: "center" }}>User Details Modal</h1>
+      <div style={{ textAlign: "center" }}>
+        <button onClick={() => setIsOpen(true)}>Open Form</button>
+      </div>
 
-      {isModalOpen && (
-        <div
-          className="modal"
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}>
-          <div
-            className="modal-content"
-            style={{
-              backgroundColor: "white",
-              padding: "20px",
-              borderRadius: "8px",
-              boxShadow: "0 2px 10px rgba(0,0,0,0.2)",
-              minWidth: "300px",
-            }}>
+      {isOpen && (
+        <div className="modal">
+          <div className="modal-content" ref={modalRef}>
+            <h2 style={{ textAlign: "center" }}>Fill Details</h2>
             <form onSubmit={handleSubmit}>
-              <div>
-                <label htmlFor="username">Username:</label>
-                <br />
-                <input
-                  id="username"
-                  type="text"
-                  value={formData.username}
-                  onChange={handleInputChange}
-                />
+              <label htmlFor="username">Username:</label>
+              <input
+                id="username"
+                type="text"
+                value={formData.username}
+                onChange={handleInputChange}
+                required
+              />
+
+              <label htmlFor="email">Email Address:</label>
+              <input
+                id="email"
+                type="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                required
+              />
+
+              <label htmlFor="phone">Phone Number:</label>
+              <input id="phone" type="tel" value={formData.phone} onChange={handleInputChange} />
+
+              <label htmlFor="dob">Date of Birth:</label>
+              <input id="dob" type="date" value={formData.dob} onChange={handleInputChange} />
+
+              <div style={{ textAlign: "center", marginTop: "1rem" }}>
+                <button type="submit" className="submit-button">
+                  Submit
+                </button>
               </div>
-              <div>
-                <label htmlFor="email">Email:</label>
-                <br />
-                <input
-                  id="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div>
-                <label htmlFor="phone">Phone:</label>
-                <br />
-                <input id="phone" type="tel" value={formData.phone} onChange={handleInputChange} />
-              </div>
-              <div>
-                <label htmlFor="dob">Date of Birth:</label>
-                <br />
-                <input id="dob" type="date" value={formData.dob} onChange={handleInputChange} />
-              </div>
-              <br />
-              <button
-                type="submit"
-                className="submit-button"
-                style={{
-                  padding: "10px 20px",
-                  backgroundColor: "green",
-                  border: "none",
-                  color: "white",
-                  fontSize: "1rem",
-                  borderRadius: "5px",
-                  cursor: "pointer",
-                }}>
-                Submit
-              </button>
             </form>
           </div>
         </div>
       )}
     </div>
   );
-};
-
-export default Form;
+}
