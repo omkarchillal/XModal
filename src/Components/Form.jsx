@@ -30,7 +30,7 @@ export default function Form() {
     const selectedDate = new Date(dob);
     const today = new Date();
     if (selectedDate > today) {
-      alert("Invalid date of birth. Please enter a valid date.");
+      alert("Invalid date of birth. Date of birth cannot be in the future.");
       return;
     }
 
@@ -64,7 +64,9 @@ export default function Form() {
     <div>
       <h1 style={{ textAlign: "center" }}>User Details Modal</h1>
       <div style={{ textAlign: "center" }}>
-        <button className="openForm-button" onClick={() => setIsOpen(true)}>Open Form</button>
+        <button className="openForm-button" onClick={() => setIsOpen(true)}>
+          Open Form
+        </button>
       </div>
 
       {isOpen && (
