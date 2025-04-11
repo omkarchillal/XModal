@@ -34,7 +34,6 @@ export default function Form() {
       return;
     }
 
-    // Reset form and close modal
     setIsOpen(false);
     setFormData({
       username: "",
@@ -65,7 +64,7 @@ export default function Form() {
     <div>
       <h1 style={{ textAlign: "center" }}>User Details Modal</h1>
       <div style={{ textAlign: "center" }}>
-        <button onClick={() => setIsOpen(true)}>Open Form</button>
+        <button className="openForm-button" onClick={() => setIsOpen(true)}>Open Form</button>
       </div>
 
       {isOpen && (
