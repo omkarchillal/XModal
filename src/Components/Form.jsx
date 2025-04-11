@@ -22,26 +22,31 @@ const Form = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const { username, email, phone, dob } = formData;
-
-    // Validate all fields filled
-    if (!username || !email || !phone || !dob) {
-      alert("Please fill out all fields.");
+    if (!username) {
+      alert("Please fill out the username.");
       return;
     }
-
-    // Validatation of email format
+    if (!email) {
+      alert("Please fill out the email.");
+      return;
+    }
     if (!email.includes("@")) {
       alert("Invalid email. Please check your email address.");
       return;
     }
-
-    // Validatation of 10-digit phone number
+    if (!phone) {
+      alert("Please fill out the phone number.");
+      return;
+    }
     if (!/^\d{10}$/.test(phone)) {
       alert("Invalid phone number. Please enter a 10-digit phone number.");
       return;
     }
+    if (!dob) {
+      alert("Please fill out the date of birth.");
+      return;
+    }
 
-    // Validatation of date is not in the future
     const enteredDate = new Date(dob);
     const today = new Date();
     if (enteredDate > today) {
@@ -49,7 +54,6 @@ const Form = () => {
       return;
     }
 
-    // If valid, reset form and close modal
     alert("Form submitted successfully!");
     setFormData({ username: "", email: "", phone: "", dob: "" });
     setIsModalOpen(false);
